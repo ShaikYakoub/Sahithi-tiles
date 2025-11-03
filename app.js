@@ -1,0 +1,580 @@
+// Product Data
+const productsData = {
+    floorTiles: [
+        'ROYALE 120X180', 'ROYALE 80X160', 'ELITE DSF', 'RT32', 'OUTDOOR TILES',
+        'ELITE PLUS RT 126', 'ELITE DSF RT24', 'ELITE PLUS', 'VW 126', 'SSF RT22',
+        'RT22 SSR', 'RT22', 'ELITE GVT RT22', 'VW22 SSR', 'ELITE GVT V22', 'ELITE MEGA WHITE'
+    ],
+    specializedTiles: [
+        'TILES FOR ESD HAZARD', 'TILES FOR RAMPS & WET AREAS', 'RT16', 'VW16',
+        'STAIRCASE TILES', 'VW12', 'RT12', 'HEAVY DUTY TILES', 'HIGH TRAFFIC TILES',
+        'ENDURA DESIGNER COLLECTION', 'ALKALI TILES', 'COOL ROOF TILES', 'TACTILES',
+        'ELITE PLANKS RT', 'ELITE PLANKS VW', 'PARKING TILES', 'SWIMMING POOL TILES SOLUTION'
+    ],
+    sanitaryware: [
+        'COMBO EWC TOILETS', 'MOUNTED P-TRAP TOILETS', 'MOUNTED S-TOILETS',
+        'INDIAN TOILETS/ORISSA PAN', 'DESIGNER ONE PIECE TOILETS', 'ONE PIECE P-TOILETS',
+        'ONE PIECE S-TRAP TOILETS', 'DESIGNER WALL HUNG TOILETS', 'WALL MOUNTED TOILETS',
+        'TANKS & FLUSH VALVES', 'URINAL POT'
+    ]
+};
+
+// Gallery Data
+const galleryData = [
+    { category: 'bathrooms', label: 'Modern Bathroom Installation', height: 300 },
+    { category: 'kitchens', label: 'Contemporary Kitchen Design', height: 350 },
+    { category: 'floors', label: 'Elegant Floor Tiles', height: 280 },
+    { category: 'commercial', label: 'Commercial Lobby', height: 320 },
+    { category: 'bathrooms', label: 'Luxury Bathroom Suite', height: 340 },
+    { category: 'kitchens', label: 'Kitchen Backsplash', height: 290 },
+    { category: 'floors', label: 'Living Room Flooring', height: 310 },
+    { category: 'bathrooms', label: 'Shower Enclosure', height: 330 },
+    { category: 'commercial', label: 'Office Space', height: 300 },
+    { category: 'floors', label: 'Outdoor Patio Tiles', height: 320 },
+    { category: 'kitchens', label: 'Modern Kitchen Tiles', height: 340 },
+    { category: 'bathrooms', label: 'Bathroom Vanity Area', height: 300 }
+];
+
+const gradients = [
+    'linear-gradient(135deg, #1A3A52 0%, #2d5a7b 100%)',
+    'linear-gradient(135deg, #D4896B 0%, #c07a5d 100%)',
+    'linear-gradient(135deg, #4A90A4 0%, #3d7a8a 100%)',
+    'linear-gradient(135deg, #C09853 0%, #a88446 100%)',
+    'linear-gradient(135deg, #333333 0%, #1a1a1a 100%)',
+];
+
+function toKebabCase(str) {
+    return str.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+}
+
+// Navigation
+function initNavigation() {
+    const hamburger = document.getElementById('hamburger');
+    const mainNav = document.getElementById('mainNav');
+    const navLinks = document.querySelectorAll('.nav-link');
+    const pages = document.querySelectorAll('.page');
+    const closeNavBtn = document.getElementById('closeNav');
+
+    // Hamburger menu toggle
+    hamburger.addEventListener('click', function () {
+        hamburger.classList.toggle('active');
+        mainNav.classList.toggle('active');
+    });
+
+    closeNavBtn.addEventListener('click', function () {
+        hamburger.classList.remove('active');
+        mainNav.classList.remove('active');
+    });
+
+    // Page navigation
+    document.addEventListener('click', function (e) {
+        const target = e.target.closest('[data-page]');
+        if (target) {
+            e.preventDefault();
+            const pageId = target.getAttribute('data-page');
+            switchPage(pageId);
+
+            // Close mobile menu if open
+            hamburger.classList.remove('active');
+            mainNav.classList.remove('active');
+        }
+    });
+
+    function switchPage(pageId) {
+        // Hide all pages
+        pages.forEach(page => page.classList.remove('active'));
+
+        // Show selected page
+        const selectedPage = document.getElementById(pageId);
+        if (selectedPage) {
+            selectedPage.classList.add('active');
+            // If switching to products page, ensure it's populated
+            if (pageId === 'products' && !document.getElementById('floorTilesGrid').hasChildNodes()) {
+                initProductsPage();
+            }
+            // If switching to gallery page, ensure it's populated
+            if (pageId === 'gallery' && !document.getElementById('galleryGrid').hasChildNodes()) {
+                initGallery();
+            }
+        }
+
+        // Update nav links
+        navLinks.forEach(link => {
+            link.classList.remove('active');
+            if (link.getAttribute('data-page') === pageId) {
+                link.classList.add('active');
+            }
+        });
+
+        // Scroll to top
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // Smooth scroll to sections
+    document.addEventListener('click', function (e) {
+        const target = e.target.closest('[data-scroll]');
+        if (target) {
+            e.preventDefault();
+            const sectionId = target.getAttribute('data-scroll');
+            const section = document.getElementById(sectionId);
+            if (section) {
+                section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        }
+    });
+
+    // Category card clicks
+    document.addEventListener('click', function (e) {
+        const card = e.target.closest('.category-card[data-scroll-products]');
+        if (card) {
+            e.preventDefault();
+            // Switch to products page
+            switchPage('products');
+            // Scroll to specific category
+            setTimeout(() => {
+                const categoryId = card.getAttribute('data-scroll-products');
+                const categoryElement = document.getElementById(categoryId);
+                if (categoryElement) {
+                    categoryElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    // Expand the category if collapsed
+                    if (!categoryElement.classList.contains('expanded')) {
+                        categoryElement.classList.add('expanded');
+                    }
+                }
+            }, 300);
+        }
+    });
+}
+
+// Hero Slider
+function initHeroSlider() {
+    const slides = document.querySelectorAll('.slide');
+    const sliderDots = document.getElementById('sliderDots');
+    const prevBtn = document.getElementById('sliderPrev');
+    const nextBtn = document.getElementById('sliderNext');
+    let currentSlide = 0;
+    let autoplayInterval;
+
+    // Create dots
+    slides.forEach((_, index) => {
+        const dot = document.createElement('div');
+        dot.classList.add('slider-dot');
+        if (index === 0) dot.classList.add('active');
+        dot.addEventListener('click', () => goToSlide(index));
+        sliderDots.appendChild(dot);
+    });
+
+    const dots = sliderDots.querySelectorAll('.slider-dot');
+
+    function goToSlide(n) {
+        slides[currentSlide].classList.remove('active');
+        dots[currentSlide].classList.remove('active');
+        currentSlide = (n + slides.length) % slides.length;
+        slides[currentSlide].classList.add('active');
+        dots[currentSlide].classList.add('active');
+    }
+
+    function nextSlide() {
+        goToSlide(currentSlide + 1);
+    }
+
+    function prevSlide() {
+        goToSlide(currentSlide - 1);
+    }
+
+    prevBtn.addEventListener('click', prevSlide);
+    nextBtn.addEventListener('click', nextSlide);
+
+    // Autoplay
+    function startAutoplay() {
+        autoplayInterval = setInterval(nextSlide, 5000);
+    }
+
+    function stopAutoplay() {
+        clearInterval(autoplayInterval);
+    }
+
+    startAutoplay();
+
+    // Pause on hover
+    const sliderContainer = document.querySelector('.slider-container');
+    sliderContainer.addEventListener('mouseenter', stopAutoplay);
+    sliderContainer.addEventListener('mouseleave', startAutoplay);
+}
+
+// Featured Products Carousel
+function initFeaturedCarousel() {
+    const track = document.getElementById('carouselTrack');
+    const prevBtn = document.getElementById('carouselPrev');
+    const nextBtn = document.getElementById('carouselNext');
+    const cards = track.querySelectorAll('.product-card');
+    let currentIndex = 0;
+
+    function getCardsToShow() {
+        if (window.innerWidth >= 1024) return 4;
+        if (window.innerWidth >= 768) return 2;
+        return 1;
+    }
+
+    function updateCarousel() {
+        const cardsToShow = getCardsToShow();
+        const cardWidth = cards[0].offsetWidth;
+        const gap = 20;
+        const offset = -(currentIndex * (cardWidth + gap));
+        track.style.transform = `translateX(${offset}px)`;
+
+        // Disable buttons at boundaries
+        prevBtn.disabled = currentIndex === 0;
+        nextBtn.disabled = currentIndex >= cards.length - cardsToShow;
+    }
+
+    prevBtn.addEventListener('click', function () {
+        if (currentIndex > 0) {
+            currentIndex--;
+            updateCarousel();
+        }
+    });
+
+    nextBtn.addEventListener('click', function () {
+        const cardsToShow = getCardsToShow();
+        if (currentIndex < cards.length - cardsToShow) {
+            currentIndex++;
+            updateCarousel();
+        }
+    });
+
+    window.addEventListener('resize', function () {
+        currentIndex = 0;
+        updateCarousel();
+    });
+
+    updateCarousel();
+
+    // Product enquiry buttons
+    document.addEventListener('click', function (e) {
+        const btn = e.target.closest('[data-product]');
+        if (btn) {
+            e.preventDefault();
+            const productName = btn.getAttribute('data-product');
+            const message = `Hi, I'm interested in ${productName}. Please provide more information.`;
+            const whatsappUrl = `https://wa.me/917207436141?text=${encodeURIComponent(message)}`;
+            window.open(whatsappUrl, '_blank');
+        }
+    });
+}
+
+// Testimonials
+function initTestimonials() {
+    const track = document.getElementById('testimonialTrack');
+    const dotsContainer = document.getElementById('testimonialDots');
+    const cards = track.querySelectorAll('.testimonial-card');
+    let currentIndex = 0;
+
+    // Create dots
+    cards.forEach((_, index) => {
+        const dot = document.createElement('div');
+        dot.classList.add('testimonial-dot');
+        if (index === 0) dot.classList.add('active');
+        dot.addEventListener('click', () => goToTestimonial(index));
+        dotsContainer.appendChild(dot);
+    });
+
+    const dots = dotsContainer.querySelectorAll('.testimonial-dot');
+
+    function goToTestimonial(n) {
+        cards[currentIndex].classList.remove('active');
+        dots[currentIndex].classList.remove('active');
+        currentIndex = (n + cards.length) % cards.length;
+        cards[currentIndex].classList.add('active');
+        dots[currentIndex].classList.add('active');
+    }
+
+    // Autoplay
+    setInterval(() => {
+        goToTestimonial(currentIndex + 1);
+    }, 6000);
+}
+
+// Products Page
+function initProductsPage() {
+    console.log("Initializing Products Page...");
+
+    // Populate product grids
+    populateProductGrid('floorTilesGrid', productsData.floorTiles);
+    populateProductGrid('specializedTilesGrid', productsData.specializedTiles);
+    populateProductGrid('sanitarywareGrid', productsData.sanitaryware);
+
+    // Category toggle
+    const categoryHeaders = document.querySelectorAll('.category-header');
+    categoryHeaders.forEach(header => {
+        header.addEventListener('click', function () {
+            const targetId = this.getAttribute('data-toggle');
+            const content = document.getElementById(targetId);
+            const icon = this.querySelector('.toggle-icon');
+
+            content.classList.toggle('expanded');
+
+            if (content.classList.contains('expanded')) {
+                icon.style.transform = 'rotate(180deg)';
+            } else {
+                icon.style.transform = 'rotate(0deg)';
+            }
+        });
+    });
+}
+
+function populateProductGrid(gridId, products) {
+    const grid = document.getElementById(gridId);
+    if (!grid) return;
+
+    products.forEach((product, index) => {
+        const card = document.createElement('div');
+        card.classList.add('product-card');
+
+        card.innerHTML = `
+            <img src="images/products/${toKebabCase(product)}.jpg" alt="${product}" class="product-image" loading="lazy">
+            <h3 class="product-name">${product}</h3>
+            <button class="btn btn-outline btn-small" data-product="${product}">Enquire Now</button>
+        `;
+
+        grid.appendChild(card);
+    });
+}
+
+// Gallery
+function initGallery() {
+    const galleryGrid = document.getElementById('galleryGrid');
+    const filterBtns = document.querySelectorAll('.filter-btn');
+    const lightbox = document.getElementById('lightbox');
+    const lightboxContent = document.getElementById('lightboxContent');
+    const lightboxClose = document.getElementById('lightboxClose');
+    const lightboxPrev = document.getElementById('lightboxPrev');
+    const lightboxNext = document.getElementById('lightboxNext');
+    let currentLightboxIndex = 0;
+    let filteredItems = [...galleryData];
+
+    // Populate gallery
+    function populateGallery(items) {
+        galleryGrid.innerHTML = '';
+        items.forEach((item, index) => {
+            const galleryItem = document.createElement('div');
+            galleryItem.classList.add('gallery-item');
+            galleryItem.setAttribute('data-category', item.category);
+            galleryItem.setAttribute('data-index', index);
+
+            galleryItem.innerHTML = `
+                <img src="images/gallery/${toKebabCase(item.label)}.jpg" alt="${item.label}" class="gallery-item-image" style="height: ${item.height}px" loading="lazy">
+                <div class="gallery-item-overlay">
+                    <div class="gallery-item-title">${item.label}</div>
+                </div>
+            `;
+
+            galleryItem.addEventListener('click', function () {
+                currentLightboxIndex = index;
+                openLightbox();
+            });
+
+            galleryGrid.appendChild(galleryItem);
+        });
+    }
+
+    populateGallery(galleryData);
+
+    // Filter functionality
+    filterBtns.forEach(btn => {
+        btn.addEventListener('click', function () {
+            filterBtns.forEach(b => b.classList.remove('active'));
+            this.classList.add('active');
+
+            const filter = this.getAttribute('data-filter');
+            if (filter === 'all') {
+                filteredItems = [...galleryData];
+            } else {
+                filteredItems = galleryData.filter(item => item.category === filter);
+            }
+            populateGallery(filteredItems);
+        });
+    });
+
+    // Lightbox
+    function openLightbox() {
+        const item = filteredItems[currentLightboxIndex];
+
+        lightboxContent.innerHTML = `
+            <img src="images/gallery/${toKebabCase(item.label)}.jpg" alt="${item.label}" style="max-width: 90vw; max-height: 90vh; border-radius: 8px;">
+        `;
+
+        lightbox.classList.add('active');
+    }
+
+    function closeLightbox() {
+        lightbox.classList.remove('active');
+    }
+
+    function nextImage() {
+        currentLightboxIndex = (currentLightboxIndex + 1) % filteredItems.length;
+        openLightbox();
+    }
+
+    function prevImage() {
+        currentLightboxIndex = (currentLightboxIndex - 1 + filteredItems.length) % filteredItems.length;
+        openLightbox();
+    }
+
+    lightboxClose.addEventListener('click', closeLightbox);
+    lightboxPrev.addEventListener('click', prevImage);
+    lightboxNext.addEventListener('click', nextImage);
+
+    lightbox.addEventListener('click', function (e) {
+        if (e.target === lightbox) {
+            closeLightbox();
+        }
+    });
+
+    // Keyboard navigation
+    document.addEventListener('keydown', function (e) {
+        if (!lightbox.classList.contains('active')) return;
+
+        if (e.key === 'Escape') closeLightbox();
+        if (e.key === 'ArrowLeft') prevImage();
+        if (e.key === 'ArrowRight') nextImage();
+    });
+}
+
+// Forms
+function initForms() {
+    const whatsappForm = document.getElementById('whatsappForm');
+    const contactForm = document.getElementById('contactForm');
+
+    if (whatsappForm) {
+        whatsappForm.addEventListener('submit', handleFormSubmit);
+    }
+
+    if (contactForm) {
+        contactForm.addEventListener('submit', handleFormSubmit);
+    }
+
+    function handleFormSubmit(e) {
+        e.preventDefault();
+
+        const form = e.target;
+        const formData = new FormData(form);
+
+        // Validate required fields
+        const name = formData.get('name');
+        const phone = formData.get('phone');
+
+        if (!name || !phone) {
+            alert('Please fill in all required fields');
+            return;
+        }
+
+        // Show loading state
+        const submitBtn = form.querySelector('button[type="submit"]');
+        const originalText = submitBtn.innerHTML;
+        submitBtn.classList.add('loading');
+        submitBtn.disabled = true;
+
+        // Format WhatsApp message
+        let message = `*New Inquiry*\n\n`;
+        message += `*Name:* ${name}\n`;
+        message += `*Phone:* ${phone}\n`;
+
+        const email = formData.get('email');
+        if (email) message += `*Email:* ${email}\n`;
+
+        const productInterest = formData.get('product-interest');
+        if (productInterest) message += `*Product Interest:* ${productInterest}\n`;
+
+        const projectType = formData.get('project-type');
+        if (projectType) message += `*Project Type:* ${projectType}\n`;
+
+        const contactTime = formData.get('contact-time');
+        if (contactTime) message += `*Preferred Time:* ${contactTime}\n`;
+
+        const messageText = formData.get('message');
+        if (messageText) message += `\n*Message:*\n${messageText}`;
+
+        // Redirect to WhatsApp
+        setTimeout(() => {
+            const whatsappUrl = `https://wa.me/917207436141?text=${encodeURIComponent(message)}`;
+            window.open(whatsappUrl, '_blank');
+
+            // Reset form
+            form.reset();
+            submitBtn.classList.remove('loading');
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = originalText;
+
+            alert('Redirecting to WhatsApp...');
+        }, 500);
+    }
+}
+
+// Scroll Animations
+function initScrollAnimations() {
+    const observerOptions = {
+        threshold: 0.1,
+        rootMargin: '0px 0px -50px 0px'
+    };
+
+    const observer = new IntersectionObserver(function (entries) {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('fade-in');
+                observer.unobserve(entry.target);
+            }
+        });
+    }, observerOptions);
+
+    // Observe sections
+    const sections = document.querySelectorAll('section');
+    sections.forEach(section => {
+        observer.observe(section);
+    });
+}
+
+// Floating WhatsApp Button
+function initFloatingWhatsApp() {
+    const whatsappFloat = document.getElementById('whatsappFloat');
+    let lastScrollTop = 0;
+
+    window.addEventListener('scroll', function () {
+        const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+
+        if (window.innerWidth <= 768) {
+            if (scrollTop > lastScrollTop) {
+                // Scrolling down
+                whatsappFloat.style.transform = 'scale(0)';
+            } else {
+                // Scrolling up
+                whatsappFloat.style.transform = 'scale(1)';
+            }
+        } else {
+            whatsappFloat.style.transform = 'scale(1)';
+        }
+
+        lastScrollTop = scrollTop;
+    });
+}
+
+// Sticky Header
+window.addEventListener('scroll', function () {
+    const header = document.getElementById('mainHeader');
+    if (window.scrollY > 100) {
+        header.style.boxShadow = '0 4px 20px rgba(0, 0, 0, 0.15)';
+    } else {
+        header.style.boxShadow = '0 2px 10px rgba(0, 0, 0, 0.1)';
+    }
+});
+
+// Initialize App
+document.addEventListener('DOMContentLoaded', function () {
+    initNavigation();
+    initHeroSlider();
+    initFeaturedCarousel();
+    initTestimonials();
+    initForms();
+    initScrollAnimations();
+    initFloatingWhatsApp();
+});
