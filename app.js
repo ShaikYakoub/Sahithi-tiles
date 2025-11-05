@@ -21,18 +21,18 @@ const productsData = {
 
 // Gallery Data
 const galleryData = [
-    { category: 'bathrooms', label: 'Modern Bathroom Installation', height: 300 },
-    { category: 'kitchens', label: 'Contemporary Kitchen Design', height: 350 },
-    { category: 'floors', label: 'Elegant Floor Tiles', height: 280 },
-    { category: 'commercial', label: 'Commercial Lobby', height: 320 },
-    { category: 'bathrooms', label: 'Luxury Bathroom Suite', height: 340 },
-    { category: 'kitchens', label: 'Kitchen Backsplash', height: 290 },
-    { category: 'floors', label: 'Living Room Flooring', height: 310 },
-    { category: 'bathrooms', label: 'Shower Enclosure', height: 330 },
-    { category: 'commercial', label: 'Office Space', height: 300 },
-    { category: 'floors', label: 'Outdoor Patio Tiles', height: 320 },
-    { category: 'kitchens', label: 'Modern Kitchen Tiles', height: 340 },
-    { category: 'bathrooms', label: 'Bathroom Vanity Area', height: 300 }
+    { category: 'bathrooms', label: 'Modern Bathroom Installation', height: 300, image: 'Designer_One_Piece_Toilets.jpg' },
+    { category: 'kitchens', label: 'Contemporary Kitchen Design', height: 350, image: 'KL1218.jpg' },
+    { category: 'floors', label: 'Elegant Floor Tiles', height: 280, image: 'Royale_120x180.jpg' },
+    { category: 'commercial', label: 'Commercial Lobby', height: 320, image: 'Elite_DSF_RT22.jpg' },
+    { category: 'bathrooms', label: 'Luxury Bathroom Suite', height: 340, image: 'Wall_Hung___Wall_Mounted_Toilets.jpg' },
+    { category: 'kitchens', label: 'Kitchen Backsplash', height: 290, image: 'RT1218.jpg' },
+    { category: 'floors', label: 'Living Room Flooring', height: 310, image: 'Elite_GVT_RT22.jpg' },
+    { category: 'bathrooms', label: 'Shower Enclosure', height: 330, image: 'Combo_EWC_Toilets.jpg' },
+    { category: 'commercial', label: 'Office Space', height: 300, image: 'High_Traffic_Tiles.jpg' },
+    { category: 'floors', label: 'Outdoor Patio Tiles', height: 320, image: 'Outdoor_Tiles.jpg' },
+    { category: 'kitchens', label: 'Modern Kitchen Tiles', height: 340, image: 'VW1218.jpg' },
+    { category: 'bathrooms', label: 'Bathroom Vanity Area', height: 300, image: 'Flush_Tanks_&_Flush_Valves.jpg' }
 ];
 
 const gradients = [
@@ -327,21 +327,36 @@ function populateProductGrid(gridId, products) {
     const grid = document.getElementById(gridId);
     if (!grid) return;
 
+    const imageMap = {
+        'ELITE DSF': 'Elite_DSF_RT22.jpg',
+        'ELITE PLUS': 'ELITE_PLUS_RT_126.jpg',
+        'ELITE PLUS RT 126': 'ELITE_PLUS_RT_126.jpg',
+        'VW 126': 'VW1218.jpg',
+        'RT22': 'RT22_SSR.jpg',
+        'RT32': 'RT32.jpg',
+        'VW22 SSR': 'VW22_SSR.jpg',
+        'RT22 SSR': 'RT22_SSR.jpg',
+        'SSF RT22': 'SSF_RT22.jpg'
+    };
+
     products.forEach((product, index) => {
+        const filename = imageMap[product] || product.split(' ').map(word => {
+            if (word.length <= 4 && /^[A-Z0-9]+$/.test(word)) return word; // keep short codes all caps
+            return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
+        }).join('_') + '.jpg';
+
         const card = document.createElement('div');
         card.classList.add('product-card');
 
         card.innerHTML = `
-            <img src="images/products/${toKebabCase(product)}.jpg" alt="${product}" class="product-image" loading="lazy">
+            <img src="images/${filename}" alt="${product}" class="product-image" loading="lazy" onerror="this.src='https://via.placeholder.com/300x300/EEEEEE/333333?text=${encodeURIComponent(product)}'">
             <h3 class="product-name">${product}</h3>
             <button class="btn btn-outline btn-small" data-product="${product}">Enquire Now</button>
         `;
 
         grid.appendChild(card);
     });
-}
-
-// Gallery
+}// Gallery
 function initGallery() {
     const galleryGrid = document.getElementById('galleryGrid');
     const filterBtns = document.querySelectorAll('.filter-btn');
@@ -363,7 +378,7 @@ function initGallery() {
             galleryItem.setAttribute('data-index', index);
 
             galleryItem.innerHTML = `
-                <img src="images/gallery/${toKebabCase(item.label)}.jpg" alt="${item.label}" class="gallery-item-image" style="height: ${item.height}px" loading="lazy">
+                <img src="images/${item.image}" alt="${item.label}" class="gallery-item-image" style="height: ${item.height}px" loading="lazy" onerror="this.src='https://via.placeholder.com/400x${item.height}/CCCCCC/FFFFFF?text=${encodeURIComponent(item.label)}'">
                 <div class="gallery-item-overlay">
                     <div class="gallery-item-title">${item.label}</div>
                 </div>
@@ -401,7 +416,7 @@ function initGallery() {
         const item = filteredItems[currentLightboxIndex];
 
         lightboxContent.innerHTML = `
-            <img src="images/gallery/${toKebabCase(item.label)}.jpg" alt="${item.label}" style="max-width: 90vw; max-height: 90vh; border-radius: 8px;">
+            <img src="images/${item.image}" alt="${item.label}" style="max-width: 90vw; max-height: 90vh; border-radius: 8px;" onerror="this.src='https://via.placeholder.com/1200x800/333333/FFFFFF?text=${encodeURIComponent(item.label)}'">
         `;
 
         lightbox.classList.add('active');
@@ -574,7 +589,27 @@ document.addEventListener('DOMContentLoaded', function () {
     initHeroSlider();
     initFeaturedCarousel();
     initTestimonials();
+    initProductsPage(); // Eagerly load products
+    initGallery(); // Eagerly load gallery
     initForms();
     initScrollAnimations();
     initFloatingWhatsApp();
+
+    // Global image error handler
+    document.addEventListener('error', (e) => {
+        const target = e.target;
+        // Check if the target is an image
+        if (target.tagName.toLowerCase() === 'img') {
+            const altText = target.alt || 'Placeholder';
+            const width = target.offsetWidth > 0 ? target.offsetWidth : 300;
+            const height = target.offsetHeight > 0 ? target.offsetHeight : 200;
+
+            // Prevent infinite loop if placeholder also fails
+            if (target.src.startsWith('https://via.placeholder.com/')) {
+                return;
+            }
+
+            target.src = `https://via.placeholder.com/${width}x${height}/CCCCCC/FFFFFF?text=${encodeURIComponent(altText)}`;
+        }
+    }, true); // Use capture phase to catch errors early
 });
