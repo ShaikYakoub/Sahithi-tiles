@@ -1395,7 +1395,7 @@ section {
     border-radius: 12px;
     text-align: center;
     transition: all 0.3s ease;
-    color: rgba(19, 52, 59, 1); /* Direct bluish-green color */
+    color: var(--text-light);
 }
 
 .service-box:hover {
@@ -1420,7 +1420,7 @@ section {
     font-size: 20px;
     font-weight: 600;
     margin-bottom: 15px;
-    color: rgba(19, 52, 59, 1); /* Direct bluish-green color */
+    color: var(--primary-color);
 }
 
 .service-box:hover .service-title,
