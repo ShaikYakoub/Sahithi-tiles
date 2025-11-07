@@ -181,8 +181,8 @@ function initHeroSlider() {
 
         const img = document.createElement('img');
         // Use absolute URLs for GitHub Pages, relative for local development
-        const baseUrl = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' 
-            ? '' 
+        const baseUrl = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+            ? ''
             : 'https://shaikyakoub.github.io/Sahithi-tiles/';
         img.src = `${baseUrl}images/Banner/${slideData.image}`;
         img.alt = `Banner image ${index + 1}`;
@@ -372,8 +372,13 @@ function populateProductGrid(gridId, products) {
         const card = document.createElement('div');
         card.classList.add('product-card');
 
+        // Use absolute URLs for GitHub Pages, relative for local development
+        const baseUrl = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+            ? ''
+            : 'https://shaikyakoub.github.io/Sahithi-tiles/';
+
         card.innerHTML = `
-            <img src="images/${filename}" alt="${product}" class="product-image" loading="lazy" onerror="this.src='https://via.placeholder.com/300x300/EEEEEE/333333?text=${encodeURIComponent(product)}'">
+            <img src="${baseUrl}images/${filename}" alt="${product}" class="product-image" loading="lazy" onerror="this.src='https://via.placeholder.com/300x300/EEEEEE/333333?text=${encodeURIComponent(product)}'">
             <h3 class="product-name">${product}</h3>
             <button class="btn btn-outline btn-small" data-product="${product}">Enquire Now</button>
         `;
@@ -395,6 +400,11 @@ function initGallery() {
     // Populate gallery
     function populateGallery(items) {
         galleryGrid.innerHTML = '';
+        // Use absolute URLs for GitHub Pages, relative for local development
+        const baseUrl = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+            ? ''
+            : 'https://shaikyakoub.github.io/Sahithi-tiles/';
+        
         items.forEach((item, index) => {
             const galleryItem = document.createElement('div');
             galleryItem.classList.add('gallery-item');
@@ -402,7 +412,7 @@ function initGallery() {
             galleryItem.setAttribute('data-index', index);
 
             galleryItem.innerHTML = `
-                <img src="images/${item.image}" alt="${item.label}" class="gallery-item-image" style="height: ${item.height}px" loading="lazy" onerror="this.src='https://via.placeholder.com/400x${item.height}/CCCCCC/FFFFFF?text=${encodeURIComponent(item.label)}'">
+                <img src="${baseUrl}images/${item.image}" alt="${item.label}" class="gallery-item-image" style="height: ${item.height}px" loading="lazy" onerror="this.src='https://via.placeholder.com/400x${item.height}/CCCCCC/FFFFFF?text=${encodeURIComponent(item.label)}'">
                 <div class="gallery-item-overlay">
                     <div class="gallery-item-title">${item.label}</div>
                 </div>
@@ -438,9 +448,13 @@ function initGallery() {
     // Lightbox
     function openLightbox() {
         const item = filteredItems[currentLightboxIndex];
+        // Use absolute URLs for GitHub Pages, relative for local development
+        const baseUrl = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+            ? ''
+            : 'https://shaikyakoub.github.io/Sahithi-tiles/';
 
         lightboxContent.innerHTML = `
-            <img src="images/${item.image}" alt="${item.label}" style="max-width: 90vw; max-height: 90vh; border-radius: 8px;" onerror="this.src='https://via.placeholder.com/1200x800/333333/FFFFFF?text=${encodeURIComponent(item.label)}'">
+            <img src="${baseUrl}images/${item.image}" alt="${item.label}" style="max-width: 90vw; max-height: 90vh; border-radius: 8px;" onerror="this.src='https://via.placeholder.com/1200x800/333333/FFFFFF?text=${encodeURIComponent(item.label)}'">
         `;
 
         lightbox.classList.add('active');
