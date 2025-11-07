@@ -164,6 +164,12 @@ function initHeroSlider() {
     const sliderDots = document.getElementById('sliderDots');
     const prevBtn = document.getElementById('sliderPrev');
     const nextBtn = document.getElementById('sliderNext');
+
+    if (!sliderContainer || !sliderDots || !prevBtn || !nextBtn) {
+        console.error('Slider elements not found');
+        return;
+    }
+
     let currentSlide = 0;
     let autoplayInterval;
 
@@ -209,6 +215,43 @@ function initHeroSlider() {
     });
 
     const dots = sliderDots.querySelectorAll('.slider-dot');
+
+    // Function to go to a specific slide
+    function goToSlide(index) {
+        if (index < 0) index = slides.length - 1;
+        if (index >= slides.length) index = 0;
+
+        // Remove active class from current slide and dot
+        slides[currentSlide].classList.remove('active');
+        dots[currentSlide].classList.remove('active');
+
+        // Add active class to new slide and dot
+        currentSlide = index;
+        slides[currentSlide].classList.add('active');
+        dots[currentSlide].classList.add('active');
+    }
+
+    // Navigation button event listeners
+    prevBtn.addEventListener('click', () => goToSlide(currentSlide - 1));
+    nextBtn.addEventListener('click', () => goToSlide(currentSlide + 1));
+
+    // Autoplay functionality
+    function startAutoplay() {
+        autoplayInterval = setInterval(() => {
+            goToSlide(currentSlide + 1);
+        }, 5000); // Change slide every 5 seconds
+    }
+
+    function stopAutoplay() {
+        clearInterval(autoplayInterval);
+    }
+
+    // Pause autoplay on hover
+    sliderContainer.addEventListener('mouseenter', stopAutoplay);
+    sliderContainer.addEventListener('mouseleave', startAutoplay);
+
+    // Start autoplay
+    startAutoplay();
 }
 
 // Featured Products Carousel
