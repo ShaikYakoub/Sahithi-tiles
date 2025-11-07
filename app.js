@@ -180,7 +180,11 @@ function initHeroSlider() {
         if (index === 0) slide.classList.add('active');
 
         const img = document.createElement('img');
-        img.src = `https://shaikyakoub.github.io/Sahithi-tiles/images/Banner/${slideData.image}`;
+        // Use absolute URLs for GitHub Pages, relative for local development
+        const baseUrl = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' 
+            ? '' 
+            : 'https://shaikyakoub.github.io/Sahithi-tiles/';
+        img.src = `${baseUrl}images/Banner/${slideData.image}`;
         img.alt = `Banner image ${index + 1}`;
         img.className = 'slide-bg';
         img.onerror = function () {
