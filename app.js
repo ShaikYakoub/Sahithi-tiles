@@ -181,7 +181,7 @@ function initHeroSlider() {
         if (index === 0) slide.classList.add('active');
 
         const img = document.createElement('img');
-        img.src = `images/Banner/${slideData.image}`;
+        img.src = `https://shaikyakoub.github.io/Sahithi-tiles/images/Banner/${slideData.image}`;
         img.alt = `Banner image ${index + 1}`;
         img.className = 'slide-bg';
         img.onerror = function () {
