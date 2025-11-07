@@ -1395,6 +1395,7 @@ section {
     border-radius: 12px;
     text-align: center;
     transition: all 0.3s ease;
+    color: var(--text-dark); /* Ensure dark text by default */
 }
 
 .service-box:hover {
