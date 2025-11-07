@@ -19,6 +19,30 @@ const productsData = {
     ]
 };
 
+// Banner Images for Hero Slider
+const bannerImages = [
+    {
+        image: '1.jpg',
+        title: 'Upgrade your kitchen with sleek, textured glass tiles for a modern, easy-to-clean look!'
+    },
+    {
+        image: '5.jpg',
+        title: 'Bring nature indoors with these earthy, multicolored rustic tiles—perfect for walls or floors!'
+    },
+    {
+        image: '2.jpg',
+        title: 'Make a bold statement with chevron pattern tiles—where contemporary style meets timeless elegance.'
+    },
+    {
+        image: '3.jpg',
+        title: 'Add a playful touch to any space with classic checkerboard tiles—vivid, retro, and always in style.'
+    },
+    {
+        image: '4.jpg',
+        title: 'Transform your bathroom with elegant, textured tiles and stylish accents for a luxurious spa feel.'
+    }
+];
+
 // Gallery Data
 const galleryData = [
     { category: 'bathrooms', label: 'Modern Bathroom Installation', height: 300, image: 'Designer_One_Piece_Toilets.jpg' },
@@ -34,18 +58,6 @@ const galleryData = [
     { category: 'kitchens', label: 'Modern Kitchen Tiles', height: 340, image: 'VW1218.jpg' },
     { category: 'bathrooms', label: 'Bathroom Vanity Area', height: 300, image: 'Flush_Tanks_&_Flush_Valves.jpg' }
 ];
-
-const gradients = [
-    'linear-gradient(135deg, #1A3A52 0%, #2d5a7b 100%)',
-    'linear-gradient(135deg, #D4896B 0%, #c07a5d 100%)',
-    'linear-gradient(135deg, #4A90A4 0%, #3d7a8a 100%)',
-    'linear-gradient(135deg, #C09853 0%, #a88446 100%)',
-    'linear-gradient(135deg, #333333 0%, #1a1a1a 100%)',
-];
-
-function toKebabCase(str) {
-    return str.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
-}
 
 // Navigation
 function initNavigation() {
@@ -148,12 +160,44 @@ function initNavigation() {
 
 // Hero Slider
 function initHeroSlider() {
-    const slides = document.querySelectorAll('.slide');
+    const sliderContainer = document.querySelector('.slider-container');
     const sliderDots = document.getElementById('sliderDots');
     const prevBtn = document.getElementById('sliderPrev');
     const nextBtn = document.getElementById('sliderNext');
     let currentSlide = 0;
     let autoplayInterval;
+
+    // Create slides dynamically
+    bannerImages.forEach((slideData, index) => {
+        const slide = document.createElement('div');
+        slide.classList.add('slide');
+        if (index === 0) slide.classList.add('active');
+
+        const img = document.createElement('img');
+        img.src = `images/Banner/${slideData.image}`;
+        img.alt = `Banner image ${index + 1}`;
+        img.className = 'slide-bg';
+        img.onerror = function () {
+            this.src = 'https://via.placeholder.com/1200x600/CCCCCC/FFFFFF?text=Image+Not+Found';
+        };
+
+        const content = document.createElement('div');
+        content.className = 'slide-content';
+        content.innerHTML = `
+            <h1 class="slide-title">${slideData.title}</h1>
+            <p class="slide-subtitle">Premium Quality Tiles & Sanitaryware</p>
+            <div class="slide-buttons">
+                <button class="btn btn-primary" data-page="products">Explore Products</button>
+                <button class="btn btn-secondary" data-scroll="inquiry-form">Get Quote</button>
+            </div>
+        `;
+
+        slide.appendChild(img);
+        slide.appendChild(content);
+        sliderContainer.appendChild(slide);
+    });
+
+    const slides = document.querySelectorAll('.slide');
 
     // Create dots
     slides.forEach((_, index) => {
@@ -165,41 +209,6 @@ function initHeroSlider() {
     });
 
     const dots = sliderDots.querySelectorAll('.slider-dot');
-
-    function goToSlide(n) {
-        slides[currentSlide].classList.remove('active');
-        dots[currentSlide].classList.remove('active');
-        currentSlide = (n + slides.length) % slides.length;
-        slides[currentSlide].classList.add('active');
-        dots[currentSlide].classList.add('active');
-    }
-
-    function nextSlide() {
-        goToSlide(currentSlide + 1);
-    }
-
-    function prevSlide() {
-        goToSlide(currentSlide - 1);
-    }
-
-    prevBtn.addEventListener('click', prevSlide);
-    nextBtn.addEventListener('click', nextSlide);
-
-    // Autoplay
-    function startAutoplay() {
-        autoplayInterval = setInterval(nextSlide, 5000);
-    }
-
-    function stopAutoplay() {
-        clearInterval(autoplayInterval);
-    }
-
-    startAutoplay();
-
-    // Pause on hover
-    const sliderContainer = document.querySelector('.slider-container');
-    sliderContainer.addEventListener('mouseenter', stopAutoplay);
-    sliderContainer.addEventListener('mouseleave', startAutoplay);
 }
 
 // Featured Products Carousel
@@ -217,6 +226,8 @@ function initFeaturedCarousel() {
     }
 
     function updateCarousel() {
+        if (cards.length === 0) return; // Safety check
+
         const cardsToShow = getCardsToShow();
         const cardWidth = cards[0].offsetWidth;
         const gap = 20;
@@ -263,42 +274,8 @@ function initFeaturedCarousel() {
     });
 }
 
-// Testimonials
-function initTestimonials() {
-    const track = document.getElementById('testimonialTrack');
-    const dotsContainer = document.getElementById('testimonialDots');
-    const cards = track.querySelectorAll('.testimonial-card');
-    let currentIndex = 0;
-
-    // Create dots
-    cards.forEach((_, index) => {
-        const dot = document.createElement('div');
-        dot.classList.add('testimonial-dot');
-        if (index === 0) dot.classList.add('active');
-        dot.addEventListener('click', () => goToTestimonial(index));
-        dotsContainer.appendChild(dot);
-    });
-
-    const dots = dotsContainer.querySelectorAll('.testimonial-dot');
-
-    function goToTestimonial(n) {
-        cards[currentIndex].classList.remove('active');
-        dots[currentIndex].classList.remove('active');
-        currentIndex = (n + cards.length) % cards.length;
-        cards[currentIndex].classList.add('active');
-        dots[currentIndex].classList.add('active');
-    }
-
-    // Autoplay
-    setInterval(() => {
-        goToTestimonial(currentIndex + 1);
-    }, 6000);
-}
-
 // Products Page
 function initProductsPage() {
-    console.log("Initializing Products Page...");
-
     // Populate product grids
     populateProductGrid('floorTilesGrid', productsData.floorTiles);
     populateProductGrid('specializedTilesGrid', productsData.specializedTiles);
@@ -588,9 +565,9 @@ document.addEventListener('DOMContentLoaded', function () {
     initNavigation();
     initHeroSlider();
     initFeaturedCarousel();
-    initTestimonials();
-    initProductsPage(); // Eagerly load products
-    initGallery(); // Eagerly load gallery
+    // initTestimonials(); // Removed - testimonials section no longer exists
+    // initProductsPage(); // Only call when navigating to products page
+    // initGallery(); // Only call when navigating to gallery page
     initForms();
     initScrollAnimations();
     initFloatingWhatsApp();
