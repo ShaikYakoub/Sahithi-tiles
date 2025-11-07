@@ -1395,7 +1395,7 @@ section {
     border-radius: 12px;
     text-align: center;
     transition: all 0.3s ease;
-    color: var(--text-dark); /* Ensure dark text by default */
+    color: #1A1A1A; /* Dark text for visibility */
 }
 
 .service-box:hover {
@@ -1420,11 +1420,13 @@ section {
     font-size: 20px;
     font-weight: 600;
     margin-bottom: 15px;
+    color: #1A1A1A; /* Ensure dark color */
 }
 
 .service-description {
     font-size: 14px;
     line-height: 1.6;
+    color: #333333; /* Ensure readable color */
 }
 
 /* Inquiry Form */
