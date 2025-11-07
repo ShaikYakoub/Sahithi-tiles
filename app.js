@@ -170,6 +170,7 @@ function initHeroSlider() {
         return;
     }
 
+    console.log('initHeroSlider: elements found, proceeding');
     let currentSlide = 0;
     let autoplayInterval;
 
