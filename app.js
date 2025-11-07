@@ -404,7 +404,7 @@ function initGallery() {
         const baseUrl = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
             ? ''
             : 'https://shaikyakoub.github.io/Sahithi-tiles/';
-        
+
         items.forEach((item, index) => {
             const galleryItem = document.createElement('div');
             galleryItem.classList.add('gallery-item');
@@ -632,6 +632,7 @@ document.addEventListener('DOMContentLoaded', function () {
     initForms();
     initScrollAnimations();
     initFloatingWhatsApp();
+    initThemeToggle();
 
     // Global image error handler
     document.addEventListener('error', (e) => {
@@ -651,3 +652,34 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }, true); // Use capture phase to catch errors early
 });
+
+// Theme Toggle Functionality
+function initThemeToggle() {
+    const themeToggle = document.getElementById('themeToggle');
+    const html = document.documentElement;
+    
+    // Check for saved theme preference or default to light mode
+    const savedTheme = localStorage.getItem('theme') || 'light';
+    
+    // Apply the saved theme
+    if (savedTheme === 'dark') {
+        html.setAttribute('data-color-scheme', 'dark');
+    } else {
+        html.removeAttribute('data-color-scheme');
+    }
+    
+    // Toggle theme on button click
+    themeToggle.addEventListener('click', function() {
+        const currentTheme = html.getAttribute('data-color-scheme');
+        
+        if (currentTheme === 'dark') {
+            // Switch to light mode
+            html.removeAttribute('data-color-scheme');
+            localStorage.setItem('theme', 'light');
+        } else {
+            // Switch to dark mode
+            html.setAttribute('data-color-scheme', 'dark');
+            localStorage.setItem('theme', 'dark');
+        }
+    });
+}
