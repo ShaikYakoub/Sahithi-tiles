@@ -1395,7 +1395,7 @@ section {
     border-radius: 12px;
     text-align: center;
     transition: all 0.3s ease;
-    color: var(--color-text); /* Use same text color as rest of site */
+    color: rgba(19, 52, 59, 1); /* Direct bluish-green color */
 }
 
 .service-box:hover {
@@ -1420,13 +1420,12 @@ section {
     font-size: 20px;
     font-weight: 600;
     margin-bottom: 15px;
-    color: var(--color-text); /* Use same color as rest of site */
+    color: rgba(19, 52, 59, 1); /* Direct bluish-green color */
 }
 
-.service-description {
-    font-size: 14px;
-    line-height: 1.6;
-    color: var(--color-text-secondary); /* Use secondary text color */
+.service-box:hover .service-title,
+.service-box:hover .service-description {
+    color: var(--white); /* White text on hover */
 }
 
 /* Inquiry Form */
